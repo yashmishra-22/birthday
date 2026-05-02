@@ -29,7 +29,7 @@ const CONFIG = {
   HEART_INTERVAL: 1200,
 
   // Music file path (replace with your actual file)
-  MUSIC_SRC: "assets/WhatsApp Audio 2026-05-02 at 2.52.03 PM.mpeg",
+  MUSIC_SRC: "assets/music.mpeg",
 
   // Music volume 0–1
   MUSIC_VOLUME: 0.35,
