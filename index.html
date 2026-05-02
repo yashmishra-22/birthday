@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday 🎂</title>
+  <meta name="description" content="A special birthday surprise just for you." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- canvas-confetti CDN (lightweight, no framework) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       FLOATING HEARTS LAYER (global, always present)
+       ============================================================ -->
+  <div id="hearts-container" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       MUSIC TOGGLE BUTTON
+       ============================================================ -->
+  <button id="music-btn" class="music-btn" title="Toggle Music" aria-label="Toggle background music">
+    🎵
+  </button>
+
+  <!-- Background audio — replace src with your music file -->
+  <audio id="bg-music" loop>
+    <source src="assets/music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- ============================================================
+       PAGE 0: SECRET ENTRY (Password / Special Date Gate)
+       ============================================================ -->
+  <section id="page-entry" class="page active" aria-label="Secret entry">
+    <div class="entry-card glass-card">
+      <div class="entry-lock" aria-hidden="true">🔐</div>
+      <h1 class="entry-title">This is a Secret 🤫</h1>
+      <p class="entry-subtitle">Enter the special date to unlock your surprise</p>
+      <p class="entry-hint">(hint: the date everything changed ✨)</p>
+
+      <div class="entry-input-group">
+        <input
+          id="entry-input"
+          type="text"
+          class="entry-input"
+          placeholder="DD/MM/YYYY"
+          maxlength="10"
+          autocomplete="off"
+          aria-label="Enter special date"
+        />
+        <button id="entry-btn" class="btn btn-primary btn-3d" onclick="checkEntry()">
+          Unlock 💫
+        </button>
+      </div>
+
+      <p id="entry-error" class="entry-error" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 1: INTRO (Name + Photo)
+       ============================================================ -->
+  <section id="page-intro" class="page" aria-label="Introduction">
+    <div class="intro-card glass-card">
+
+      <!-- LEFT: Text -->
+      <div class="intro-text">
+        <span class="intro-tag">✨ A little surprise for</span>
+        <h1 class="intro-name">
+          <!-- Replace [Name] below -->
+          For Sama ❤️
+        </h1>
+        <p class="intro-subtitle">Something very special is waiting for you…</p>
+        <button class="btn btn-primary btn-3d" onclick="goToPage('page-birthday')">
+          Open 🎁
+        </button>
+      </div>
+
+      <!-- RIGHT: Photo -->
+      <div class="intro-photo-wrap">
+        <div class="photo-glow"></div>
+        <!-- Replace src with actual photo path, e.g. assets/photo.jpg -->
+        <img
+          id="intro-photo"
+          class="intro-photo"
+          src="assets/photo.jpg"
+          alt="Birthday person photo"
+          onerror="this.src='https://placehold.co/380x420/FFB6C1/fff?text=Your+Photo+Here'"
+        />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 2: HAPPY BIRTHDAY
+       ============================================================ -->
+  <section id="page-birthday" class="page" aria-label="Happy Birthday">
+
+    <!-- Floating hearts rendered by JS -->
+    <div class="birthday-content">
+      <div class="bday-emoji-row" aria-hidden="true">🎂 🎉 🎈</div>
+      <h1 class="bday-heading">Happy Birthday!</h1>
+
+      <!-- Typing animation container -->
+      <div class="bday-message-wrap">
+        <p id="bday-typing" class="bday-message" aria-live="polite"></p>
+        <span class="typing-cursor" id="typing-cursor" aria-hidden="true">|</span>
+      </div>
+
+      <button
+        id="see-memories-btn"
+        class="btn btn-primary btn-3d hidden"
+        onclick="goToPage('page-memories')"
+      >
+        See Our Memories 💜
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PAGE 3: MEMORY GRID
+       ============================================================ -->
+  <section id="page-memories" class="page" aria-label="Memory gallery">
+
+    <div class="memories-header">
+      <h2 class="section-title">Our Memories 📸</h2>
+      <p class="section-sub">Every moment with you is a treasure</p>
+    </div>
+
+    <!-- Memory Grid — 3 columns -->
+    <div class="memory-grid" id="memory-grid">
+      <!-- Generated by JS from MEMORIES array in script.js -->
+    </div>
+
+    <div class="memories-footer">
+      <button class="btn btn-primary btn-3d" onclick="goToPage('page-thankyou')">
+        One Last Thing 💌
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       MEMORY DETAIL MODAL
+       ============================================================ -->
+  <div id="memory-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Memory detail">
+    <div class="modal-card glass-card">
+
+      <!-- Close X -->
+      <button class="modal-close" onclick="closeModal()" aria-label="Close memory">✕</button>
+
+      <!-- LEFT: photo -->
+      <div class="modal-photo-wrap">
+        <img id="modal-photo" class="modal-photo" src="" alt="Memory photo" />
+      </div>
+
+      <!-- RIGHT: text -->
+      <div class="modal-text">
+        <span id="modal-date" class="modal-date"></span>
+        <h3 id="modal-title" class="modal-title"></h3>
+        <p id="modal-caption" class="modal-caption"></p>
+        <button class="btn btn-secondary btn-3d" onclick="closeModal()">
+          ← Go Back
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PAGE 4: THANK YOU
+       ============================================================ -->
+  <section id="page-thankyou" class="page" aria-label="Thank you">
+
+    <!-- Confetti canvas inserted by JS -->
+    <div class="thankyou-content">
+      <div class="ty-emoji" aria-hidden="true">💌</div>
+      <h1 class="ty-heading glow-text">Thank You ❤️</h1>
+      <p class="ty-message">
+        You are the most beautiful part of my world.<br />
+        Every day with you is a gift I never want to return.<br /><br />
+        <em>You mean everything to me.</em>
+      </p>
+
+      <div class="ty-hearts-row" aria-hidden="true">❤️ 💜 💙 💛 🩷</div>
+
+      <button class="btn btn-primary btn-3d" onclick="goToPage('page-intro')">
+        Start Over 🔄
+      </button>
+    </div>
+
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
